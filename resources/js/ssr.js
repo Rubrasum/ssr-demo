@@ -14,12 +14,12 @@ createServer((page) =>
         title: (title) => `${title} - ${appName}`,
         resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
         setup({ App, props, plugin }) {
-            const ssr = createSSRApp({ render: () => h(App, props) });
-
-            ssr.use(ZiggyVue, Ziggy);
-            ssr.use(plugin);
-
-            return ssr;
+            return createSSRApp({ render: () => h(App, props) })
+                .use(plugin)
+                .use(ZiggyVue, {
+                    ...page.props.ziggy,
+                    location: new URL(page.props.ziggy.location),
+                });
         },
     })
 );
